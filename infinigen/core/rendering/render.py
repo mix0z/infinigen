@@ -45,8 +45,10 @@ def configure_360_camera(camera):
     camera.data.type = 'PANO'  # Set camera type to panoramic
     # Ensure the render engine is Cycles
     if bpy.context.scene.render.engine != 'CYCLES':
-        raise ValueError("Cycles render engine is not enabled.")
+        bpy.context.scene.render.engine = 'CYCLES'  # Set the render engine to Cycles
 
+    if not hasattr(camera.data, 'cycles'):
+        raise ValueError("Cycles render engine is required for panoramic rendering.")
     camera.data.cycles.panorama_type = 'EQUIRECTANGULAR'  # Set panoramic type to equirectangular
 
     # Optional settings depending on your needs
@@ -470,6 +472,7 @@ def render_image(
 
     if use_dof == "IF_TARGET_SET":
         use_dof = camera.data.dof.focus_object is not None
+
     elif use_dof is not None:
         camera.data.dof.use_dof = use_dof
         camera.data.dof.aperture_fstop = dof_aperture_fstop
