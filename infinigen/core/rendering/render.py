@@ -41,7 +41,15 @@ TRANSPARENT_SHADERS = {Nodes.TranslucentBSDF, Nodes.TransparentBSDF}
 
 logger = logging.getLogger(__name__)
 
+def configure_360_camera(camera):
+    camera.data.type = 'PANO'  # Set camera type to panoramic
+    camera.data.cycles.panorama_type = 'EQUIRECTANGULAR'  # Set panoramic type to equirectangular
 
+    # Optional settings depending on your needs
+    camera.data.angle_x = np.radians(360)  # Horizontal FOV
+    camera.data.angle_y = np.radians(180)  # Vertical FOV
+
+    cam_util.adjust_camera_sensor(camera)
 
 def remove_translucency():
     # The asserts were added since these edge cases haven't appeared yet -Lahav
@@ -453,6 +461,8 @@ def render_image(
     fileslot_suffix = get_suffix({"frame": "####", **indices})
     for file_slot in file_slot_nodes:
         file_slot.path = f"{file_slot.path}{fileslot_suffix}"
+
+    configure_360_camera(camera)
 
     if use_dof == "IF_TARGET_SET":
         use_dof = camera.data.dof.focus_object is not None
