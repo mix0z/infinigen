@@ -42,6 +42,7 @@ TRANSPARENT_SHADERS = {Nodes.TranslucentBSDF, Nodes.TransparentBSDF}
 logger = logging.getLogger(__name__)
 
 
+
 def remove_translucency():
     # The asserts were added since these edge cases haven't appeared yet -Lahav
     for material in bpy.data.materials:
