@@ -42,9 +42,9 @@ TRANSPARENT_SHADERS = {Nodes.TranslucentBSDF, Nodes.TransparentBSDF}
 logger = logging.getLogger(__name__)
 
 def configure_360_camera(camera):
-    camera.data.type = 'PANO'  # Set camera type to panoramic
-    # Ensure the render engine is Cycles
-    camera.data.cycles.panorama_type = 'EQUIRECTANGULAR'  # Set panoramic type to equirectangular
+    bpy.context.scene.render.engine = 'CYCLES'
+    bpy.context.active_object.data.type = 'PANO'
+    bpy.context.active_object.data.cycles.panorama_type = 'EQUIRECTANGULAR'
 
     # Optional settings depending on your needs
     camera.data.angle_x = np.radians(360)  # Horizontal FOV
@@ -405,7 +405,8 @@ def render_image(
     use_dof=False,
     dof_aperture_fstop=2.8,
 ):
-    camera = bpy.data.objects.new("Camera", camera.data.copy())
+    configure_360_camera(camera)
+
     tic = time.time()
 
     for exclude in excludes:
@@ -417,7 +418,7 @@ def render_image(
     tmp_dir.mkdir(exist_ok=True)
     bpy.context.scene.render.filepath = f"{tmp_dir}{os.sep}"
 
-    camrig_id, subcam_id = cam_util.get_id(camera.data)
+    camrig_id, subcam_id = cam_util.get_id(camera)
 
     if flat_shading:
         with Timer("Set object indices"):
@@ -463,8 +464,6 @@ def render_image(
     fileslot_suffix = get_suffix({"frame": "####", **indices})
     for file_slot in file_slot_nodes:
         file_slot.path = f"{file_slot.path}{fileslot_suffix}"
-
-    configure_360_camera(camera)
 
     if use_dof == "IF_TARGET_SET":
         use_dof = camera.data.dof.focus_object is not None
