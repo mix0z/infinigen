@@ -9,6 +9,7 @@
 
 import json
 import logging
+import math
 import os
 import time
 from pathlib import Path
@@ -42,16 +43,25 @@ TRANSPARENT_SHADERS = {Nodes.TranslucentBSDF, Nodes.TransparentBSDF}
 logger = logging.getLogger(__name__)
 
 def configure_360_camera(camera):
+    # Ensure the scene is using Cycles
     bpy.context.scene.render.engine = 'CYCLES'
+    bpy.context.scene.camera = camera
+    bpy.context.view_layer.update()
 
-    camera.data.type = 'PANO'  # Set camera type to panoramic
-    # Ensure the render engine is Cycles
-    camera.data.cycles.panorama_type = 'EQUIRECTANGULAR'  # Set panoramic type to equirectangular
+    # Confirm camera is of the right type
+    if camera.type != 'CAMERA':
+        raise TypeError("The provided object is not a camera.")
 
-    # Optional settings depending on your needs
-    camera.data.angle_x = np.radians(360)  # Horizontal FOV
-    camera.data.angle_y = np.radians(180)  # Vertical FOV
+    # Now safe to set panoramic properties
+    camera.data.type = 'PANO'
+    camera.data.cycles.panorama_type = 'EQUIRECTANGULAR'
 
+    # Optional FOV settings (for equirectangular, usually full 360x180 anyway)
+    camera.data.angle_x = math.radians(360)
+    camera.data.angle_y = math.radians(180)
+
+    # Adjust camera sensor if needed
+    # Make sure cam_util.adjust_camera_sensor exists and works on this camera
     cam_util.adjust_camera_sensor(camera)
 
 def remove_translucency():
