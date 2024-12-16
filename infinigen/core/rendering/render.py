@@ -405,7 +405,7 @@ def render_image(
     use_dof=False,
     dof_aperture_fstop=2.8,
 ):
-    camera = bpy.data.objects[camera]
+    camera = bpy.data.objects.new("Camera", camera.data.copy())
     tic = time.time()
 
     for exclude in excludes:
