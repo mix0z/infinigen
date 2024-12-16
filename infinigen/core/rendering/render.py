@@ -42,9 +42,9 @@ TRANSPARENT_SHADERS = {Nodes.TranslucentBSDF, Nodes.TransparentBSDF}
 logger = logging.getLogger(__name__)
 
 def configure_360_camera(camera):
-    bpy.context.scene.render.engine = 'CYCLES'
-    bpy.context.active_object.data.type = 'PANO'
-    bpy.context.active_object.data.cycles.panorama_type = 'EQUIRECTANGULAR'
+    camera = bpy.data.objects.new(name="HDRI Camera", object_data=camera.data)
+    camera.data.type = 'PANO'
+    camera.data.cycles.panorama_type = 'EQUIRECTANGULAR'
 
     # Optional settings depending on your needs
     camera.data.angle_x = np.radians(360)  # Horizontal FOV
