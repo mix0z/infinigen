@@ -417,7 +417,7 @@ def render_image(
     tmp_dir.mkdir(exist_ok=True)
     bpy.context.scene.render.filepath = f"{tmp_dir}{os.sep}"
 
-    camrig_id, subcam_id = cam_util.get_id(camera)
+    camrig_id, subcam_id = cam_util.get_id(camera.data)
 
     if flat_shading:
         with Timer("Set object indices"):
