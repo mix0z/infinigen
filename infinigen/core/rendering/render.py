@@ -42,13 +42,10 @@ TRANSPARENT_SHADERS = {Nodes.TranslucentBSDF, Nodes.TransparentBSDF}
 logger = logging.getLogger(__name__)
 
 def configure_360_camera(camera):
+    bpy.context.scene.render.engine = 'CYCLES'
+
     camera.data.type = 'PANO'  # Set camera type to panoramic
     # Ensure the render engine is Cycles
-    if bpy.context.scene.render.engine != 'CYCLES':
-        bpy.context.scene.render.engine = 'CYCLES'  # Set the render engine to Cycles
-
-    if not hasattr(camera.data, 'cycles'):
-        raise ValueError("Cycles render engine is required for panoramic rendering.")
     camera.data.cycles.panorama_type = 'EQUIRECTANGULAR'  # Set panoramic type to equirectangular
 
     # Optional settings depending on your needs
