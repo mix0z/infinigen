@@ -43,6 +43,10 @@ logger = logging.getLogger(__name__)
 
 def configure_360_camera(camera):
     camera.data.type = 'PANO'  # Set camera type to panoramic
+    # Ensure the render engine is Cycles
+    if bpy.context.scene.render.engine != 'CYCLES':
+        raise ValueError("Cycles render engine is not enabled.")
+
     camera.data.cycles.panorama_type = 'EQUIRECTANGULAR'  # Set panoramic type to equirectangular
 
     # Optional settings depending on your needs
